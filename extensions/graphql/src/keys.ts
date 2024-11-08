@@ -3,11 +3,14 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
+import {BaseContext} from '@apollo/server';
+import {ExpressMiddlewareOptions} from '@apollo/server/dist/esm/express4';
 import {BindingKey, Constructor, CoreBindings} from '@loopback/core';
-import {AuthChecker, PubSubEngine, ResolverData} from 'type-graphql';
+import {PubSub} from 'graphql-subscriptions';
+import {AuthChecker, ResolverData} from 'type-graphql';
 import {GraphQLComponent} from './graphql.component';
 import {GraphQLServer} from './graphql.server';
-import {ContextFunction, ExpressContext, GraphQLServerOptions} from './types';
+import {GraphQLServerOptions, GraphQLWsContextResolver} from './types';
 
 /**
  * Namespace for GraphQL related bindings
@@ -37,8 +40,11 @@ export namespace GraphQLBindings {
    * Binding key for the GraphQL context resolver
    */
   export const GRAPHQL_CONTEXT_RESOLVER = BindingKey.create<
-    ContextFunction<ExpressContext>
+    ExpressMiddlewareOptions<BaseContext>['context']
   >('graphql.contextResolver');
+
+  export const GRAPHQL_WS_CONTEXT_RESOLVER =
+    BindingKey.create<GraphQLWsContextResolver>('graphql.wsContextResolver');
 
   /**
    * Binding key for the GraphQL auth checker
@@ -50,14 +56,14 @@ export namespace GraphQLBindings {
   /**
    * Binding key for the GraphQL pub/sub engine
    */
-  export const PUB_SUB_ENGINE = BindingKey.create<PubSubEngine>(
+  export const PUB_SUB_ENGINE = BindingKey.create<PubSub>(
     'graphql.pubSubEngine',
   );
 
   /**
    * Binding key for the GraphQL resolver data - which is bound per request
    */
-  export const RESOLVER_DATA = BindingKey.create<ResolverData<unknown>>(
+  export const RESOLVER_DATA = BindingKey.create<ResolverData<object>>(
     'graphql.resolverData',
   );
 

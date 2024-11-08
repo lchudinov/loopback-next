@@ -3,16 +3,14 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
+import {ApolloServerOptionsWithStaticSchema, BaseContext} from '@apollo/server';
+import {ExpressMiddlewareOptions} from '@apollo/server/dist/esm/express4';
 import {HttpOptions} from '@loopback/http-server';
-import {
-  ApolloServerExpressConfig,
-  GetMiddlewareOptions,
-} from 'apollo-server-express';
+import {ExecutionArgs} from 'graphql';
+import {GraphQLExecutionContextValue, SubscribeMessage} from 'graphql-ws';
 
-export {ContextFunction} from 'apollo-server-core';
-export {ApolloServerExpressConfig, ExpressContext} from 'apollo-server-express';
 export {Float, ID, Int, ResolverInterface} from 'type-graphql';
-export {Middleware as GraphQLMiddleware} from 'type-graphql/dist/interfaces/Middleware';
+export {Middleware as GraphQLMiddleware} from 'type-graphql/build/typings/typings/middleware';
 
 /**
  * Options for GraphQL component
@@ -24,16 +22,18 @@ export interface GraphQLComponentOptions {
 /**
  * Options for GraphQL server
  */
-export interface GraphQLServerOptions extends HttpOptions {
+export interface GraphQLServerOptions<
+  TContext extends BaseContext = BaseContext,
+> extends HttpOptions {
   /**
    * ApolloServerExpress related configuration
    */
-  apollo?: ApolloServerExpressConfig;
+  apollo?: Partial<ApolloServerOptionsWithStaticSchema<TContext>>;
 
   /**
    * Middleware options for GraphQL
    */
-  middlewareOptions?: GetMiddlewareOptions;
+  middlewareOptions?: ExpressMiddlewareOptions<TContext>; // GetMiddlewareOptions;
 
   /**
    * Express settings
@@ -43,4 +43,14 @@ export interface GraphQLServerOptions extends HttpOptions {
    * Use as a middleware for RestServer instead of a standalone server
    */
   asMiddlewareOnly?: boolean;
+
+  graphQLPath?: string;
+
+  validate?: boolean;
 }
+
+export type GraphQLWsContextResolver = (
+  ctx: unknown,
+  message: SubscribeMessage,
+  args: ExecutionArgs,
+) => Promise<GraphQLExecutionContextValue> | GraphQLExecutionContextValue;
