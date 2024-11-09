@@ -4,7 +4,6 @@
 // License text available at https://opensource.org/licenses/MIT
 
 import {ApolloServerOptionsWithStaticSchema, BaseContext} from '@apollo/server';
-import {ExpressMiddlewareOptions} from '@apollo/server/dist/esm/express4';
 import {HttpOptions} from '@loopback/http-server';
 import {ExecutionArgs} from 'graphql';
 import {GraphQLExecutionContextValue, SubscribeMessage} from 'graphql-ws';
@@ -33,7 +32,7 @@ export interface GraphQLServerOptions<
   /**
    * Middleware options for GraphQL
    */
-  middlewareOptions?: ExpressMiddlewareOptions<TContext>; // GetMiddlewareOptions;
+  middlewareOptions?: Record<string, unknown>;
 
   /**
    * Express settings

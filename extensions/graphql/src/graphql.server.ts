@@ -33,7 +33,7 @@ import cors from 'cors';
 import express from 'express';
 import fs from 'fs';
 import {GraphQLSchema, lexicographicSortSchema} from 'graphql';
-import {PubSub} from 'graphql-subscriptions';
+import {PubSub, PubSubEngine} from 'graphql-subscriptions';
 import {useServer} from 'graphql-ws/lib/use/ws';
 import * as http from 'http';
 import * as https from 'https';
@@ -140,7 +140,7 @@ export class GraphQLServer extends Context implements Server {
         optional: true,
       })) ?? ((resolverData, roles) => true);
 
-    const pubSub: PubSub | undefined =
+    const pubSub: PubSubEngine | undefined =
       (await this.get(GraphQLBindings.PUB_SUB_ENGINE, {
         optional: true,
       })) ?? new PubSub();
